@@ -7,17 +7,21 @@ import "./card.css";
 class RickAndMortyCard extends React.Component {
   state = {
     data: [],
+    filteredData: [],
     species: [],
     gender: [],
     origin: [],
-    order: ["Ascending", "Descending"],
-    selectedFilters: [],
+    speciesFilter: [],
+    genderFilter: [],
+    originFilter: [],
+    orderFilter: "Ascending",
     loading: false
   };
 
   componentDidMount() {
     this.fetch();
   }
+
   fetch = (params = {}) => {
     console.log("params:", params);
     this.setState({ loading: true });
@@ -39,6 +43,7 @@ class RickAndMortyCard extends React.Component {
       this.setState({
         loading: false,
         data: data.results,
+        filteredData: data.results,
         species: allSpecies,
         gender: allGender,
         origin: allOrigin
@@ -47,68 +52,85 @@ class RickAndMortyCard extends React.Component {
   };
 
   handleFilters = (filterType, selectedFilters) => {
-    const { data } = this.state;
-    console.clear();
-    console.log("filterType:::::=>", filterType);
-    console.log("selectedFilters:::::=>", selectedFilters);
-    let filteredSpeciesRes,
-      filteredGenderRes,
-      filteredOriginRes,
-      filteredOrderRes,
-      allFilteredRes = [];
+    // these variables are getting reset everytime, need to fix this
+    let speciesFilter = [];
+    let genderFilter = [];
+    let originFilter = [];
+    let orderFilter = [];
+
     switch (filterType) {
       case "SPECIES":
-        filteredSpeciesRes = data.filter(item =>
-          selectedFilters.every(spe => item.species === spe)
-        );
+        speciesFilter = selectedFilters;
+        break;
       case "GENDER":
-        filteredGenderRes = data.filter(item =>
-          selectedFilters.every(spe => item.gender === spe)
-        );
+        genderFilter = selectedFilters;
+        break;
       case "ORIGIN":
-        filteredOriginRes = data.filter(item =>
-          selectedFilters.every(spe => item.origin.name === spe)
-        );
+        originFilter = selectedFilters;
+        break;
       case "ORDER":
-        filteredOrderRes = data.filter(item =>
-          selectedFilters.every(spe => item.location.name === spe)
-        );
+        orderFilter = selectedFilters;
+        break;
       default:
         break;
     }
-    allFilteredRes = [
-      ...filteredSpeciesRes,
-      ...filteredGenderRes,
-      ...filteredOriginRes,
-      ...filteredOrderRes
-    ];
-    console.log("allFilteredRes:::::=>", allFilteredRes);
 
-    // const filteredResults = data.filter(
-    //   item => item.species === selectedFilters[0]
-    // );
-    // if (filteredResults.length > 0) {
-    //   this.setState({
-    //     data: filteredResults
-    //   });
-    // }
+    this.setState(
+      {
+        speciesFilter,
+        genderFilter,
+        originFilter,
+        orderFilter
+      },
+      this.applyFilters
+    );
+  };
+
+  applyFilters = () => {
+    const {
+      data,
+      speciesFilter,
+      genderFilter,
+      originFilter,
+      orderFilter
+    } = this.state;
+    let filteredResult = data.filter(item => {
+      let con1 =
+        speciesFilter.length > 0 ? speciesFilter.includes(item.species) : true;
+      let con2 =
+        genderFilter.length > 0 ? genderFilter.includes(item.gender) : true;
+      let con3 =
+        originFilter.length > 0
+          ? originFilter.includes(item.origin.name)
+          : true;
+      return con1 && con2 && con3;
+    });
+
+    filteredResult =
+      orderFilter === "Ascending"
+        ? filteredResult.sort((a, b) => a.id - b.id)
+        : filteredResult.sort((a, b) => b.id - a.id);
+
+    // console.clear();
+    console.log("filteredResult:::=>", filteredResult);
+    this.setState({
+      filteredData: filteredResult
+    });
   };
 
   render() {
-    const { data, species, gender, order, origin } = this.state;
-    const result = data;
+    const { filteredData, species, gender, origin } = this.state;
     return (
       <div style={{ background: "#ECECEC", padding: "30px" }}>
         <SelectSizesDemo
           gender={gender}
           species={species}
-          order={order}
           origin={origin}
           applyFilters={this.handleFilters}
         />
         <Row gutter={16}>
-          {result &&
-            result.map(result => (
+          {filteredData &&
+            filteredData.map(result => (
               <Col span={6} key={result.id}>
                 <Card
                   hoverable
