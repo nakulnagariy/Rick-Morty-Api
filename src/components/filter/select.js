@@ -14,12 +14,11 @@ class SelectSizesDemo extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     console.log("select props:::", props);
-    const { gender, species, origin, order } = props;
+    const { gender, species, origin } = props;
     return {
       gender: gender,
       species: species,
-      origin: origin,
-      order: order
+      origin: origin
     };
   }
 
