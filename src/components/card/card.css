@@ -2,13 +2,46 @@
   position: relative;
 }
 
-.inCardDetails {
-  position: absolute;
-  top: 232px;
-  background: rgba(0, 0, 0, 0.7);
-  width: 100%;
-  left: 0px;
-  color: #fff;
-  padding: 15px 10px;
-  font-size: 12px;
+.rmCard {
+  margin-bottom: 2rem;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 2px 2px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+}
+
+.rmDescription {
+  border-bottom: 1px solid #7272723d;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
+.ant-card-body {
+  background: #333;
+}
+
+.spinnerWrapper {
+  text-align: center;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  padding: 30px 50px;
+  margin: 20px 0;
+}
+
+.ant-back-top {
+  bottom: 100px;
+}
+.ant-back-top-inner {
+  background-color: #202329;
+  color: #faad14;
+  text-align: center;
+  font-size: 20px;
+}
+
+.rmWrapper {
+  background: #202329;
+  padding: 30px;
 }

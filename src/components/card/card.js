@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Col, Row } from "antd";
+import { Card, Col, Row, Spin, Empty, Typography, BackTop } from "antd";
 import reqwest from "reqwest";
 import SelectSizesDemo from "../filter/select";
 import "./card.css";
@@ -8,6 +8,7 @@ class RickAndMortyCard extends React.Component {
   state = {
     data: [],
     filteredData: [],
+    totalCount: null,
     species: [],
     gender: [],
     origin: [],
@@ -43,6 +44,7 @@ class RickAndMortyCard extends React.Component {
       this.setState({
         loading: false,
         data: data.results,
+        totalCount: data.results.length,
         filteredData: data.results,
         species: allSpecies,
         gender: allGender,
@@ -52,24 +54,30 @@ class RickAndMortyCard extends React.Component {
   };
 
   handleFilters = (filterType, selectedFilters) => {
-    // these variables are getting reset everytime, need to fix this
-    let speciesFilter = [];
-    let genderFilter = [];
-    let originFilter = [];
-    let orderFilter = [];
+    const {
+      speciesFilter,
+      genderFilter,
+      originFilter,
+      orderFilter
+    } = this.state;
+
+    let speciesFilterFrmSt = speciesFilter.length > 0 ? speciesFilter : [];
+    let genderFilterFrmSt = genderFilter.length > 0 ? genderFilter : [];
+    let originFilterFrmSt = originFilter.length > 0 ? originFilter : [];
+    let orderFilterFrmSt = orderFilter.length > 0 ? orderFilter : [];
 
     switch (filterType) {
       case "SPECIES":
-        speciesFilter = selectedFilters;
+        speciesFilterFrmSt = selectedFilters;
         break;
       case "GENDER":
-        genderFilter = selectedFilters;
+        genderFilterFrmSt = selectedFilters;
         break;
       case "ORIGIN":
-        originFilter = selectedFilters;
+        originFilterFrmSt = selectedFilters;
         break;
       case "ORDER":
-        orderFilter = selectedFilters;
+        orderFilterFrmSt = selectedFilters;
         break;
       default:
         break;
@@ -77,10 +85,10 @@ class RickAndMortyCard extends React.Component {
 
     this.setState(
       {
-        speciesFilter,
-        genderFilter,
-        originFilter,
-        orderFilter
+        speciesFilter: speciesFilterFrmSt,
+        genderFilter: genderFilterFrmSt,
+        originFilter: originFilterFrmSt,
+        orderFilter: orderFilterFrmSt
       },
       this.applyFilters
     );
@@ -110,49 +118,106 @@ class RickAndMortyCard extends React.Component {
       orderFilter === "Ascending"
         ? filteredResult.sort((a, b) => a.id - b.id)
         : filteredResult.sort((a, b) => b.id - a.id);
-
-    // console.clear();
-    console.log("filteredResult:::=>", filteredResult);
+    let totalCount = filteredResult.length;
     this.setState({
-      filteredData: filteredResult
+      filteredData: filteredResult,
+      totalCount: totalCount
     });
   };
 
   render() {
-    const { filteredData, species, gender, origin } = this.state;
+    const {
+      filteredData,
+      species,
+      gender,
+      origin,
+      loading,
+      totalCount
+    } = this.state;
+    const { Text, Title } = Typography;
     return (
-      <div style={{ background: "#ECECEC", padding: "30px" }}>
+      <div className="rmWrapper">
         <SelectSizesDemo
           gender={gender}
           species={species}
           origin={origin}
           applyFilters={this.handleFilters}
         />
-        <Row gutter={16}>
-          {filteredData &&
-            filteredData.map(result => (
-              <Col span={6} key={result.id}>
-                <Card
-                  hoverable
-                  cover={<img alt={result.name} src={result.image} />}
-                  style={{ marginBottom: "15px" }}
+        <Title level={4} type="warning">{`Total results: ${totalCount}`}</Title>
+        {loading ? (
+          <div className="spinnerWrapper">
+            <Spin
+              className="ant-typography ant-typography-warning"
+              size="large"
+              tip="Waiting for Rick &amp; Morty to come!"
+            />
+          </div>
+        ) : (
+          <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+            {filteredData.length > 0 ? (
+              filteredData.map(result => (
+                <Col
+                  xs={{ span: 12 }}
+                  sm={{ span: 12 }}
+                  md={{ span: 6 }}
+                  lg={{ span: 6 }}
+                  key={result.id}
                 >
-                  <div className="inCardDetails">
-                    <p>id: {result.id}</p>
-                    <p>Name: {result.name}</p>
-                    <p>Created: {result.created}</p>
-                  </div>
-                  <div className="outCardDetails">
-                    <p>Status: {result.status}</p>
-                    <p>Species: {result.species}</p>
-                    <p>Gender: {result.gender}</p>
-                    <p>Origin: {result.origin.name}</p>
-                    <p>Last Location: {result.location.name}</p>
-                  </div>
-                </Card>
-              </Col>
-            ))}
-        </Row>
+                  <Card
+                    className="rmCard"
+                    cover={<img alt={result.name} src={result.image} />}
+                  >
+                    <div className="outCardDetails">
+                      <div className="rmDescription">
+                        <Title type="warning" level={4}>
+                          {result.name}
+                        </Title>
+                        <Text type="warning">id:&nbsp;</Text>
+                        <Text type="warning">{result.id}</Text>
+                      </div>
+                      <div className="rmDescription">
+                        <Text type="warning">Created:</Text>{" "}
+                        <Text type="warning">
+                          {`${new Date().getFullYear() -
+                            result.created.slice(0, 4)} years ago`}
+                        </Text>
+                      </div>
+
+                      <div className="rmDescription">
+                        <Text type="warning">Status:</Text>{" "}
+                        <Text type="warning">{result.status}</Text>
+                      </div>
+                      <div className="rmDescription">
+                        <Text type="warning">Species:</Text>{" "}
+                        <Text type="warning">{result.species}</Text>
+                      </div>
+                      <div className="rmDescription">
+                        <Text type="warning">Gender:</Text>{" "}
+                        <Text type="warning">{result.gender}</Text>
+                      </div>
+                      <div className="rmDescription">
+                        <Text type="warning">Origin:</Text>{" "}
+                        <Text type="warning">{result.origin.name}</Text>
+                      </div>
+                      <div className="rmDescription">
+                        <Text type="warning">Last Location:</Text>{" "}
+                        <Text type="warning">{result.location.name}</Text>
+                      </div>
+                    </div>
+                  </Card>
+                </Col>
+              ))
+            ) : (
+              <Empty
+                className="ant-typography ant-typography-warning"
+                description="Applied combination of filters, does have any data, try modifing filters."
+              />
+            )}
+          </Row>
+        )}
+        <BackTop>
+          <div className="ant-back-top-inner">UP</div>
+        </BackTop>
       </div>
     );
   }

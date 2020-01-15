@@ -33,9 +33,16 @@ class SelectSizesDemo extends React.Component {
     const { applyFilters } = this.props;
     return (
       <div>
-        <Title>Filters</Title>
-        <Row gutter={16}>
-          <Col span={6}>
+        <Title className="ant-typography ant-typography-warning">
+          THE RICK AND MORTY API
+        </Title>
+        <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+          <Col
+            xs={{ span: 24 }}
+            sm={{ span: 24 }}
+            md={{ span: 6 }}
+            lg={{ span: 6 }}
+          >
             {species && (
               <Select
                 mode="multiple"
@@ -57,7 +64,12 @@ class SelectSizesDemo extends React.Component {
               </Select>
             )}
           </Col>
-          <Col span={6}>
+          <Col
+            xs={{ span: 24 }}
+            sm={{ span: 24 }}
+            md={{ span: 6 }}
+            lg={{ span: 6 }}
+          >
             {gender && (
               <Select
                 mode="multiple"
@@ -79,7 +91,12 @@ class SelectSizesDemo extends React.Component {
               </Select>
             )}
           </Col>
-          <Col span={6}>
+          <Col
+            xs={{ span: 24 }}
+            sm={{ span: 24 }}
+            md={{ span: 6 }}
+            lg={{ span: 6 }}
+          >
             {origin && (
               <Select
                 mode="multiple"
@@ -101,7 +118,12 @@ class SelectSizesDemo extends React.Component {
               </Select>
             )}
           </Col>
-          <Col span={6}>
+          <Col
+            xs={{ span: 24 }}
+            sm={{ span: 24 }}
+            md={{ span: 6 }}
+            lg={{ span: 6 }}
+          >
             {order && (
               <Select
                 className="rmSelect rmSelectOrder"
