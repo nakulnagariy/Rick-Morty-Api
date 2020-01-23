@@ -3,14 +3,17 @@ import { Select, Typography, Col, Row } from "antd";
 import "./select.css";
 
 class SelectSizesDemo extends React.Component {
-  state = {
-    size: "default",
-    species: [],
-    gender: [],
-    origin: [],
-    order: ["Ascending", "Descending"],
-    loading: false
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      size: "default",
+      species: [],
+      gender: [],
+      origin: [],
+      order: ["Ascending", "Descending"],
+      loading: false
+    };
+  }
 
   static getDerivedStateFromProps(props, state) {
     console.log("select props:::", props);
@@ -26,11 +29,53 @@ class SelectSizesDemo extends React.Component {
     console.log(this.props);
   }
 
-  render() {
-    const { Option } = Select;
-    const { Title } = Typography;
-    const { gender, species, origin, order, loading } = this.state;
+  renderSelect(selectType) {
+    const { loading, gender, species, origin, order } = this.state;
     const { applyFilters } = this.props;
+    const { Option } = Select;
+    let data = [];
+    switch (selectType) {
+      case "SPECIES":
+        data = species;
+        break;
+      case "GENDER":
+        data = gender;
+        break;
+      case "ORIGIN":
+        data = origin;
+        break;
+      case "ORDER":
+        data = order;
+        break;
+      default:
+        data = [];
+        break;
+    }
+    return (
+      <Select
+        mode="multiple"
+        className="rmSelect rmSelectSpecies"
+        placeholder="select species"
+        autoClearSearchValue
+        allowClear
+        defaultActiveFirstOption
+        loading={loading}
+        defaultValue={data[0]}
+        onChange={val => applyFilters(selectType, val)}
+        optionLabelProp="label"
+      >
+        {data.map(item => (
+          <Option key={item} label={item}>
+            {item}
+          </Option>
+        ))}
+      </Select>
+    );
+  }
+
+  render() {
+    const { Title } = Typography;
+    const { gender, species, origin, order } = this.state;
     return (
       <div>
         <Title className="ant-typography ant-typography-warning">
@@ -43,26 +88,7 @@ class SelectSizesDemo extends React.Component {
             md={{ span: 6 }}
             lg={{ span: 6 }}
           >
-            {species && (
-              <Select
-                mode="multiple"
-                className="rmSelect rmSelectSpecies"
-                placeholder="select species"
-                autoClearSearchValue
-                allowClear
-                defaultActiveFirstOption
-                loading={loading}
-                defaultValue={species[0]}
-                onChange={val => applyFilters("SPECIES", val)}
-                optionLabelProp="label"
-              >
-                {species.map(item => (
-                  <Option key={item} label={item}>
-                    {item}
-                  </Option>
-                ))}
-              </Select>
-            )}
+            {species && this.renderSelect("SPECIES")}
           </Col>
           <Col
             xs={{ span: 24 }}
@@ -70,26 +96,7 @@ class SelectSizesDemo extends React.Component {
             md={{ span: 6 }}
             lg={{ span: 6 }}
           >
-            {gender && (
-              <Select
-                mode="multiple"
-                className="rmSelect rmSelectGender"
-                placeholder="select gender"
-                autoClearSearchValue
-                allowClear
-                defaultActiveFirstOption
-                loading={loading}
-                defaultValue={gender[0]}
-                onChange={val => applyFilters("GENDER", val)}
-                optionLabelProp="label"
-              >
-                {gender.map(item => (
-                  <Option key={item} label={item}>
-                    {item}
-                  </Option>
-                ))}
-              </Select>
-            )}
+            {gender && this.renderSelect("GENDER")}
           </Col>
           <Col
             xs={{ span: 24 }}
@@ -97,26 +104,7 @@ class SelectSizesDemo extends React.Component {
             md={{ span: 6 }}
             lg={{ span: 6 }}
           >
-            {origin && (
-              <Select
-                mode="multiple"
-                className="rmSelect rmSelectOrigin"
-                placeholder="select origin"
-                autoClearSearchValue
-                allowClear
-                defaultActiveFirstOption
-                loading={loading}
-                defaultValue={origin[0]}
-                onChange={val => applyFilters("ORIGIN", val)}
-                optionLabelProp="label"
-              >
-                {origin.map(item => (
-                  <Option key={item} label={item}>
-                    {item}
-                  </Option>
-                ))}
-              </Select>
-            )}
+            {origin && this.renderSelect("ORIGIN")}
           </Col>
           <Col
             xs={{ span: 24 }}
@@ -124,22 +112,7 @@ class SelectSizesDemo extends React.Component {
             md={{ span: 6 }}
             lg={{ span: 6 }}
           >
-            {order && (
-              <Select
-                className="rmSelect rmSelectOrder"
-                placeholder="select one order"
-                loading={loading}
-                defaultValue={order[0]}
-                onChange={val => applyFilters("ORDER", val)}
-                optionLabelProp="label"
-              >
-                {order.map(item => (
-                  <Option key={item} label={item}>
-                    {item}
-                  </Option>
-                ))}
-              </Select>
-            )}
+            {order && this.renderSelect("ORDER")}
           </Col>
         </Row>
       </div>
