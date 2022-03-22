@@ -1,4 +1,4 @@
-https://img.shields.io/github/package-json/v/nakulnagariy/Rick-Morty-Api
+![version](https://img.shields.io/github/package-json/v/nakulnagariy/Rick-Morty-Api)
 
 # Rick-Morty-Api
 
